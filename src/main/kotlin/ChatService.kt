@@ -19,7 +19,7 @@ object ChatService {
 
     fun getListMessages(userId: Int, startMessageId: Int, offsetMessage: Int): List<Message> {
         val chat = chats[userId]?: throw ChatNotFoundException("Chats not found")
-        return chat.messages.filter { it.id > startMessageId }.take(offsetMessage).onEach { if (it.incoming) it.read = true }
+        return chat.messages.asSequence().filter { it.id > startMessageId }.take(offsetMessage).onEach { if (it.incoming) it.read = true }.toList()
     }
 
     fun getUnreadChatsCount() = chats.values.count { chat -> chat.messages.any { !it.read } }
